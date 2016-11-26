@@ -184,7 +184,6 @@ def plot_decision_boundary(model, dim_red_method='pca',
             # presume Y is labeled from 0 to N-1
             cYS = [colors[i] for i in YS]
 
-        
         if Y is not None:
             ax.scatter(X2DS[:, 0], X2DS[:, 1], c=cYS)
         else:
