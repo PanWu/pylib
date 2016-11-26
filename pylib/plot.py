@@ -68,10 +68,10 @@ def plot_decision_boundary(model, dim_red_method='pca',
     ])
 
     # convert X into 2D data
+    ss, dr_model = None, None
     if X is not None:
         if X.shape[1] == 2:
             X2D = X
-            ss, dr_model = None, None
         elif X.shape[1] > 2:
             # leverage PCA to dimension reduction to 2D if not already
             ss = StandardScaler()
@@ -200,4 +200,4 @@ def plot_decision_boundary(model, dim_red_method='pca',
     ax.set_yticks(np.arange(yrg[0], yrg[1], (yrg[1] - yrg[0])/5.))
     ax.grid(True)
 
-    return fig, xrg, yrg
+    return fig, ss, dr_model
