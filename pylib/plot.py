@@ -9,13 +9,16 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from sklearn.decomposition import PCA, KernelPCA
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 
 
 def plot_decision_boundary(model, dim_red_method='pca',
                            X=None, Y=None,
                            xrg=None, yrg=None,
                            Nx=300, Ny=300,
-                           figsize=[6, 6], alpha=0.7):
+                           scatter_sample=None,
+                           figsize=[6, 6], alpha=0.7,
+                           random_state=111):
     '''
     Plot decision boundary for any two dimension classification models
         in sklearn.
@@ -95,11 +98,6 @@ def plot_decision_boundary(model, dim_red_method='pca',
         y1 = X2D[:, 1].min() - 0.1 * (X2D[:, 1].max() - X2D[:, 1].min())
         y2 = X2D[:, 1].max() + 0.1 * (X2D[:, 1].max() - X2D[:, 1].min())
 
-    # convert Y into point color
-    if Y is not None:
-        # presume Y is labeled from 0 to N-1
-        cY = [colors[i] for i in Y]
-
     # inti xrg and yrg based on given value
     if xrg is None:
         if X is None:
@@ -165,11 +163,32 @@ def plot_decision_boundary(model, dim_red_method='pca',
 
     # add scatter plot for X & Y if given
     if X is not None:
+        # down sample point if needed
         if Y is not None:
-            # print 'scatter plot', X.shape, cY.shape
-            ax.scatter(X2D[:, 0], X2D[:, 1], c=cY)
+            if scatter_sample is not None:
+                X2DS, _, YS, _ = train_test_split(X2D, Y, stratify=Y,
+                                                  train_size=scatter_sample,
+                                                  random_state=random_state)
+            else:
+                X2DS = X2D
+                YS = Y
         else:
-            ax.scatter(X2D[:, 0], X2D[:, 1])
+            if scatter_sample is not None:
+                X2DS, _ = train_test_split(X2D, train_size=scatter_sample,
+                                           random_state=random_state)
+            else:
+                X2DS = X2D
+
+        # convert Y into point color
+        if Y is not None:
+            # presume Y is labeled from 0 to N-1
+            cYS = [colors[i] for i in YS]
+
+        
+        if Y is not None:
+            ax.scatter(X2DS[:, 0], X2DS[:, 1], c=cYS)
+        else:
+            ax.scatter(X2DS[:, 0], X2DS[:, 1])
 
     # add legend on each class
     colors_bar = []
