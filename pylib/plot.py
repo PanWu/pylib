@@ -10,6 +10,7 @@ import matplotlib.patches as mpatches
 from sklearn.decomposition import PCA, KernelPCA
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+from .util import retrieve_n_class_color_cubic
 
 
 def plot_decision_boundary(model, dim_red_method='pca',
@@ -55,20 +56,6 @@ def plot_decision_boundary(model, dim_red_method='pca',
     except:
         print "model do not have method predict 'predict_proba' "
         return None
-
-    # define color representation for each pure class
-    colors = np.array([
-        [1.0, 0.0, 0.0],
-        [0.0, 1.0, 0.0],
-        [0.0, 0.0, 1.0],
-        [1.0, 1.0, 0.0],
-        [0.0, 1.0, 1.0],
-        [1.0, 0.0, 1.0],
-        [0.0, 0.0, 0.0],
-        [0.0, 0.0, 0.75],
-        [0.0, 0.75, 0.0],
-        [0.75, 0.0, 0.0]
-    ])
 
     # convert X into 2D data
     ss, dr_model = None, None
@@ -133,12 +120,9 @@ def plot_decision_boundary(model, dim_red_method='pca',
         Ypp = model.predict_proba(X_full_grid_inverse)
         Yp = model.predict(X_full_grid_inverse)
 
-    # check nclass
+    # retrieve n class from util function
     nclass = Ypp.shape[1]
-    if nclass > colors.shape[0]:
-        print 'Hard to visualize more than {0} classes.' \
-            .format(colors.shape[0])
-        return None
+    colors = np.array(retrieve_n_class_color_cubic(N=nclass))
 
     # get decision boundary line
     Yp = Yp.reshape(xx.shape)
