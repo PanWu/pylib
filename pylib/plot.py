@@ -5,6 +5,7 @@
     author: Pan Wu (ustcwupan@gmail.com)
 '''
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from sklearn.decomposition import PCA, KernelPCA
@@ -51,11 +52,13 @@ def plot_decision_boundary(model, dim_red_method='pca',
     except:
         print "model do not have method predict 'predict' "
         return None
+
+    use_prob = True
     try:
         getattr(model, 'predict_proba')
     except:
         print "model do not have method predict 'predict_proba' "
-        return None
+        use_prob = False
 
     # convert X into 2D data
     ss, dr_model = None, None
@@ -111,14 +114,20 @@ def plot_decision_boundary(model, dim_red_method='pca',
 
     # get data from model predictions
     if dr_model is None:
-        Ypp = model.predict_proba(X_full_grid)
         Yp = model.predict(X_full_grid)
+        if use_prob:
+            Ypp = model.predict_proba(X_full_grid)
+        else:
+            Ypp = pd.get_dummies(Yp).values
     else:
         X_full_grid_inverse = ss.inverse_transform(
             dr_model.inverse_transform(X_full_grid))
 
-        Ypp = model.predict_proba(X_full_grid_inverse)
         Yp = model.predict(X_full_grid_inverse)
+        if use_prob:
+            Ypp = model.predict_proba(X_full_grid_inverse)
+        else:
+            Ypp = pd.get_dummies(Yp).values
 
     # retrieve n class from util function
     nclass = Ypp.shape[1]
