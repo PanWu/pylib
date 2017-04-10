@@ -1,9 +1,9 @@
 '''
     Develop a function to visualize decision boundary
         for any classification models in 2D
-
-    author: Pan Wu (ustcwupan@gmail.com)
 '''
+
+from __future__ import absolute_import, division, print_function, unicode_literals
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -50,14 +50,14 @@ def plot_decision_boundary(model, dim_red_method='pca',
     try:
         getattr(model, 'predict')
     except:
-        print "model do not have method predict 'predict' "
+        print("model do not have method predict 'predict' ")
         return None
 
     use_prob = True
     try:
         getattr(model, 'predict_proba')
     except:
-        print "model do not have method predict 'predict_proba' "
+        print("model do not have method predict 'predict_proba' ")
         use_prob = False
 
     # convert X into 2D data
@@ -74,12 +74,12 @@ def plot_decision_boundary(model, dim_red_method='pca',
                 dr_model = KernelPCA(n_components=2,
                                      fit_inverse_transform=True)
             else:
-                print 'dim_red_method {0} is not supported'.format(
-                    dim_red_method)
+                print('dim_red_method {0} is not supported'.format(
+                    dim_red_method))
 
             X2D = dr_model.fit_transform(ss.fit_transform(X))
         else:
-            print 'X dimension is strange: {0}'.format(X.shape)
+            print('X dimension is strange: {0}'.format(X.shape))
             return None
 
         # extract two dimension info.
@@ -106,7 +106,7 @@ def plot_decision_boundary(model, dim_red_method='pca',
     ygrid = np.arange(yrg[0], yrg[1], 1. * (yrg[1] - yrg[0]) / Ny)
 
     xx, yy = np.meshgrid(xgrid, ygrid)
-    X_full_grid = np.array(zip(np.ravel(xx), np.ravel(yy)))
+    X_full_grid = np.array(list(zip(np.ravel(xx), np.ravel(yy))))
 
     # initialize figure & axes object
     fig = plt.figure(figsize=figsize)
